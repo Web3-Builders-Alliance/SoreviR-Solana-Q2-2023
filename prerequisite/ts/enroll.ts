@@ -11,7 +11,7 @@ const keypair = Keypair.fromSecretKey(new Uint8Array(wallet));
 const connection = new Connection("https://api.devnet.solana.com");
 
 // Github account
-const github = Buffer.from("https://github.com/SoreviR", "utf8");
+const github = Buffer.from("SoreviR", "utf8");
 
 // Create our anchor provider
 const provider = new AnchorProvider(connection, new Wallet(keypair), { commitment: "confirmed" });
@@ -29,7 +29,7 @@ const [enrollment_key, _bump] = PublicKey.findProgramAddressSync(enrollment_seed
 (async () => {
     try {
         const txhash = await program.methods
-            .complete(github)
+            .update(github) // used .complete at first and then .update to change the name
             .accounts({
                 signer: keypair.publicKey,
                 prereq: enrollment_key,
