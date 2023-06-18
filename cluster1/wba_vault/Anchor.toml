@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-wba_vault = "EK5MYUPp2y8KnnhCWBNMGYYkCK1k8sib4WgkWkzE6FD5"
+wba_vault = "EK5MYUPp2y8KnnhCWBNMGYYkCK1k8sib4WgkWkzE6FD5" #GhaLxgu8WVUPKJtee34VUjHgPXnkuCNHNqf36AjYQS1L
 
 [registry]
 url = "https://anchor.projectserum.com"
