@@ -13,7 +13,7 @@ use contexts::*;
 pub mod mercury_escrow_v1 {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+    pub fn make(ctx: Context<Make>) -> Result<()> {
         Ok(())
     }
 }
