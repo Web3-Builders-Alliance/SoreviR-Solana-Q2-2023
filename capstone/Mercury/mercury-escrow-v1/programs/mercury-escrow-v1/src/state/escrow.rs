@@ -5,6 +5,7 @@ use crate::constants::{ANCHOR_DISCRIMINATOR_BYTES, PUBKEY_BYTES, U64_BYTES, U8_B
 #[account]
 pub struct Escrow {
     pub maker: Pubkey,
+    pub taker: Pubkey,
     pub maker_token: Pubkey,
     pub taker_token: Pubkey,
     pub seed: u64,

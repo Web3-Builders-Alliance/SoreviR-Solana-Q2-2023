@@ -13,22 +13,25 @@ pub struct Make<'info> {
 
     #[account(mut)]
     pub maker: Signer<'info>, // signer of the transaction
+    /// CHECK: This is not dangerous because this account doesn't exist
+    pub taker: UncheckedAccount<'info>, 
 
     #[account(
         mut,
         associated_token::mint = maker_token,
-        associated_token::authority = maker
+        associated_token::authority = maker,
     )]
     pub maker_ata: Account<'info, TokenAccount>, // associated token account for maker account
-    pub maker_token: Account<'info, Mint>,       // Maybe it will need to use box
-    pub taker_token: Account<'info, Mint>,       // Maybe it will need to use box
-
+    
+    pub maker_token: Box<Account<'info, Mint>>,
+    pub taker_token: Box<Account<'info, Mint>>, // could be a unchecked account
+    
     /// CHECK: This is not dangerous because this account doesn't exist
     #[account(
         seeds =[b"auth"],
         bump
     )]
-    pub auth: UncheckedAccount<'info>,  /// WHY ??
+    pub auth: UncheckedAccount<'info>,  // required for the program to sign
 
     #[account(
         init,
@@ -38,7 +41,7 @@ pub struct Make<'info> {
         token::mint = maker_token,
         token::authority = auth,
     )]
-    pub vault: Account<'info, TokenAccount>,
+    pub vault: Account<'info, TokenAccount>,    // is a token account that holds token A
 
     #[account(
         init,
@@ -47,11 +50,11 @@ pub struct Make<'info> {
         bump, 
         space = Escrow::LEN,
     )]
-    pub escrow: Account<'info, Escrow>,
+    pub escrow: Account<'info, Escrow>, //  holds all the data for a single instance of the escrow program
 
-    pub token_program: Program<'info, Token>,
-    pub system_program: Program<'info, System>,
-    pub associated_token_program: Program<'info, AssociatedToken>
+    pub token_program: Program<'info, Token>,                       // it has the instructions to handle (move) tokens
+    pub system_program: Program<'info, System>,                     // program on chain that can create accounts. Everytime we use "init", se need it
+    pub associated_token_program: Program<'info, AssociatedToken>   // to initialize the vault account
 }
 
 
@@ -59,6 +62,7 @@ impl<'info> Make<'info> {
     pub fn init(&mut self, bumps: &BTreeMap<String, u8>, seed: u64) -> Result<()> {
         let escrow = &mut self.escrow;
         escrow.maker = *self.maker.key;
+        escrow.taker = *self.taker.key;
         escrow.maker_token = *self.maker_token.to_account_info().key;
         escrow.taker_token = *self.taker_token.to_account_info().key;
         escrow.seed = seed;
